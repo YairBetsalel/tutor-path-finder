@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { TutorProvider } from "@/contexts/TutorContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/Auth";
 import NCEAPage from "./pages/highschool/NCEA";
 import CambridgePage from "./pages/highschool/Cambridge";
 import IBPage from "./pages/highschool/IB";
@@ -15,6 +16,7 @@ import ComputerSciencePage from "./pages/university/ComputerScience";
 import LawPage from "./pages/university/Law";
 import OurTeamPage from "./pages/OurTeam";
 import TutorManagementPage from "./pages/admin/TutorManagement";
+import StudentRatingsPage from "./pages/admin/StudentRatings";
 import CalendarPage from "./pages/admin/Calendar";
 import ProfilePage from "./pages/Profile";
 
@@ -30,6 +32,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
               <Route path="/highschool/ncea" element={<NCEAPage />} />
               <Route path="/highschool/cambridge" element={<CambridgePage />} />
               <Route path="/highschool/ib" element={<IBPage />} />
@@ -38,6 +41,7 @@ const App = () => (
               <Route path="/university/law" element={<LawPage />} />
               <Route path="/our-team" element={<OurTeamPage />} />
               <Route path="/admin/tutors" element={<TutorManagementPage />} />
+              <Route path="/admin/students" element={<StudentRatingsPage />} />
               <Route path="/admin/calendar" element={<CalendarPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<NotFound />} />

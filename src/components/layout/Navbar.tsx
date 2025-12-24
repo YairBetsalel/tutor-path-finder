@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, User } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -13,7 +13,7 @@ import {
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isLoggedIn, user, login, logout } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleEnquire = () => {
@@ -22,15 +22,8 @@ export function Navbar() {
     });
   };
 
-  const handleLogin = () => {
-    login();
-    toast.success('Welcome!', {
-      description: 'You have successfully logged in.',
-    });
-  };
-
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     toast.success('Goodbye!', {
       description: 'You have been logged out.',
     });
@@ -102,32 +95,37 @@ export function Navbar() {
             Enquire Now
           </Button>
 
-          {/* Admin Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-1 font-body">
-                Admin <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 bg-popover">
-              <DropdownMenuItem asChild>
-                <Link to="/admin/tutors" className="w-full cursor-pointer">Tutors</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/admin/calendar" className="w-full cursor-pointer">Calendar</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Admin Dropdown - only show if admin */}
+          {isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-1 font-body">
+                  Admin <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 bg-popover">
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/tutors" className="w-full cursor-pointer">Tutors</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/students" className="w-full cursor-pointer">Student Ratings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/calendar" className="w-full cursor-pointer">Calendar</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Auth */}
-          {isLoggedIn && user ? (
+          {user && profile ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
                   className="ml-3 flex h-9 w-9 items-center justify-center rounded-full font-display text-sm font-bold text-primary-foreground transition-transform hover:scale-105"
-                  style={{ backgroundColor: user.color }}
+                  style={{ backgroundColor: profile.avatar_color }}
                 >
-                  {user.letter}
+                  {profile.avatar_letter}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover">
@@ -140,8 +138,8 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleLogin} className="ml-3 font-body">
-              Login / Signup
+            <Button asChild className="ml-3 font-body">
+              <Link to="/auth">Login / Signup</Link>
             </Button>
           )}
         </div>
@@ -175,19 +173,22 @@ export function Navbar() {
               <Link to="/our-team" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Our Team</Link>
               <button onClick={() => { handleEnquire(); setMobileMenuOpen(false); }} className="block w-full rounded-lg px-3 py-2 text-left text-secondary hover:bg-muted">Enquire Now</button>
             </div>
-            <div className="space-y-1">
-              <p className="px-3 text-xs font-semibold uppercase text-muted-foreground">Admin</p>
-              <Link to="/admin/tutors" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Tutors</Link>
-              <Link to="/admin/calendar" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Calendar</Link>
-            </div>
+            {isAdmin && (
+              <div className="space-y-1">
+                <p className="px-3 text-xs font-semibold uppercase text-muted-foreground">Admin</p>
+                <Link to="/admin/tutors" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Tutors</Link>
+                <Link to="/admin/students" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Student Ratings</Link>
+                <Link to="/admin/calendar" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Calendar</Link>
+              </div>
+            )}
             <div className="border-t border-border pt-2">
-              {isLoggedIn && user ? (
+              {user && profile ? (
                 <>
                   <Link to="/profile" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>My Profile</Link>
                   <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full rounded-lg px-3 py-2 text-left hover:bg-muted">Logout</button>
                 </>
               ) : (
-                <button onClick={() => { handleLogin(); setMobileMenuOpen(false); }} className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-primary-foreground">Login / Signup</button>
+                <Link to="/auth" className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-primary-foreground" onClick={() => setMobileMenuOpen(false)}>Login / Signup</Link>
               )}
             </div>
           </div>
