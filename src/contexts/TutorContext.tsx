@@ -5,7 +5,9 @@ export interface Tutor {
   name: string;
   bio: string;
   position: 'Tutor' | 'Management';
-  qualifications: string;
+  subject: string;
+  standardQualifications: string[];
+  customQualifications: string[];
   imageColor: string;
 }
 
@@ -39,7 +41,9 @@ const initialTutors: Tutor[] = [
     name: 'Dr. Sarah Mitchell',
     bio: 'Passionate educator with 15 years of experience in mathematics and physics. Specializes in making complex concepts accessible and engaging for students of all levels.',
     position: 'Management',
-    qualifications: 'PhD Mathematics, MSc Physics',
+    subject: 'Math',
+    standardQualifications: ['PhD Mathematics', 'Calculus Specialist'],
+    customQualifications: ['Award-winning Educator 2023'],
     imageColor: 'hsl(175, 75%, 25%)',
   },
   {
@@ -47,7 +51,9 @@ const initialTutors: Tutor[] = [
     name: 'James Chen',
     bio: 'Expert in computer science and programming. Former software engineer at Google with a passion for teaching the next generation of developers.',
     position: 'Tutor',
-    qualifications: 'MSc Computer Science, Bachelor of Engineering',
+    subject: 'Computer Science',
+    standardQualifications: ['MSc Computer Science', 'Software Engineer'],
+    customQualifications: ['Ex-Google Engineer', 'Open Source Contributor'],
     imageColor: 'hsl(220, 60%, 50%)',
   },
   {
@@ -55,7 +61,9 @@ const initialTutors: Tutor[] = [
     name: 'Emily Rodriguez',
     bio: 'Dedicated law tutor with experience in both academic and practical legal education. Helps students excel in their legal studies and bar preparations.',
     position: 'Tutor',
-    qualifications: 'LLM Law, Bachelor of Laws',
+    subject: 'Law',
+    standardQualifications: ['LLM', 'Bar Certified'],
+    customQualifications: ['Specialist in Patent Law for Startups'],
     imageColor: 'hsl(340, 60%, 50%)',
   },
   {
@@ -63,7 +71,9 @@ const initialTutors: Tutor[] = [
     name: 'Dr. Michael Thompson',
     bio: 'Medical educator specializing in pre-med preparation and UCAT coaching. Has helped hundreds of students achieve their dreams of medical school admission.',
     position: 'Tutor',
-    qualifications: 'MD, Bachelor of Medical Science',
+    subject: 'Medicine',
+    standardQualifications: ['MD', 'UCAT Coach'],
+    customQualifications: ['500+ Students Placed in Med School'],
     imageColor: 'hsl(150, 50%, 40%)',
   },
   {
@@ -71,7 +81,9 @@ const initialTutors: Tutor[] = [
     name: 'Rachel Kim',
     bio: 'Cambridge curriculum specialist with expertise in sciences and mathematics. IB examiner with deep understanding of assessment criteria.',
     position: 'Tutor',
-    qualifications: 'MSc Chemistry, Cambridge PGCE',
+    subject: 'Chemistry',
+    standardQualifications: ['PhD Chemistry', 'Lab Certified'],
+    customQualifications: ['IB Examiner', 'Cambridge PGCE'],
     imageColor: 'hsl(43, 74%, 50%)',
   },
   {
@@ -79,7 +91,9 @@ const initialTutors: Tutor[] = [
     name: 'David Patel',
     bio: 'NCEA and IB expert with a focus on Economics and Business Studies. Helps students develop critical thinking and analytical skills.',
     position: 'Management',
-    qualifications: 'MBA, Bachelor of Commerce',
+    subject: 'Economics',
+    standardQualifications: ['MBA', 'CFA'],
+    customQualifications: ['Former Investment Banker', 'Business Strategy Consultant'],
     imageColor: 'hsl(280, 50%, 50%)',
   },
 ];

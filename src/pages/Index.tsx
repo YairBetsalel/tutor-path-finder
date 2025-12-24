@@ -1,115 +1,99 @@
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
+import { ParallaxHero } from '@/components/hero/ParallaxHero';
 import { ArrowRight, BookOpen, Users, Trophy, GraduationCap } from 'lucide-react';
+
+const featureCards = [
+  {
+    icon: BookOpen,
+    title: 'Expert Curriculum Knowledge',
+    description: 'Tutors specialized in NCEA, Cambridge, and IB with deep assessment understanding.',
+    colorClass: 'bg-primary/10 group-hover:bg-primary/20',
+    iconColor: 'text-primary',
+  },
+  {
+    icon: Users,
+    title: 'Personalized Learning',
+    description: 'Tailored lesson plans that adapt to each student\'s unique learning style and pace.',
+    colorClass: 'bg-secondary/10 group-hover:bg-secondary/20',
+    iconColor: 'text-secondary',
+  },
+  {
+    icon: Trophy,
+    title: 'Proven Results',
+    description: 'Track record of helping students achieve top grades and university placements.',
+    colorClass: 'bg-accent/20 group-hover:bg-accent/30',
+    iconColor: 'text-accent-foreground',
+  },
+  {
+    icon: GraduationCap,
+    title: 'University Pathways',
+    description: 'Specialized preparation for Medical, Law, and Computer Science admissions.',
+    colorClass: 'bg-primary/10 group-hover:bg-primary/20',
+    iconColor: 'text-primary',
+  },
+];
 
 const Index = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero py-24 lg:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="animate-fade-in font-display text-4xl font-bold tracking-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-              Unlock Your Academic Potential
-            </h1>
-            <p className="mt-6 animate-slide-up font-body text-lg text-primary-foreground/90 [animation-delay:200ms] sm:text-xl">
-              Expert tutoring for NCEA, Cambridge, IB, and university pathways. 
-              Personalized guidance from qualified educators who understand your goals.
-            </p>
-            <div className="mt-10 flex flex-col justify-center gap-4 [animation-delay:400ms] sm:flex-row animate-slide-up">
-              <Button
-                asChild
-                size="lg"
-                className="bg-secondary font-body text-secondary-foreground hover:bg-secondary/90"
-              >
-                <Link to="/our-team">
-                  Meet Our Tutors <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="border-primary-foreground/30 bg-transparent font-body text-primary-foreground hover:bg-primary-foreground/10"
-              >
-                <Link to="/highschool/ncea">Explore Curricula</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Parallax Hero Section */}
+      <ParallaxHero />
 
       {/* Features Section */}
       <section className="py-20 lg:py-28">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-2xl text-center">
+          <motion.div
+            className="mx-auto max-w-2xl text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
               Why Choose EduPro?
             </h2>
             <p className="mt-4 font-body text-lg text-muted-foreground">
               We combine academic excellence with personalized attention to help every student succeed.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="group border-0 bg-gradient-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium">
-              <CardContent className="pt-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                  <BookOpen className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                  Expert Curriculum Knowledge
-                </h3>
-                <p className="mt-2 font-body text-sm text-muted-foreground">
-                  Tutors specialized in NCEA, Cambridge, and IB with deep assessment understanding.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group border-0 bg-gradient-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium">
-              <CardContent className="pt-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10 transition-colors group-hover:bg-secondary/20">
-                  <Users className="h-7 w-7 text-secondary" />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                  Personalized Learning
-                </h3>
-                <p className="mt-2 font-body text-sm text-muted-foreground">
-                  Tailored lesson plans that adapt to each student's unique learning style and pace.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group border-0 bg-gradient-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium">
-              <CardContent className="pt-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-accent/20 transition-colors group-hover:bg-accent/30">
-                  <Trophy className="h-7 w-7 text-accent-foreground" />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                  Proven Results
-                </h3>
-                <p className="mt-2 font-body text-sm text-muted-foreground">
-                  Track record of helping students achieve top grades and university placements.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group border-0 bg-gradient-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-medium">
-              <CardContent className="pt-8 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                  <GraduationCap className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                  University Pathways
-                </h3>
-                <p className="mt-2 font-body text-sm text-muted-foreground">
-                  Specialized preparation for Medical, Law, and Computer Science admissions.
-                </p>
-              </CardContent>
-            </Card>
+            {featureCards.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Card className="group h-full border-0 bg-gradient-card shadow-soft transition-all duration-300 hover:shadow-medium">
+                    <CardContent className="pt-8 text-center">
+                      <motion.div
+                        className={`mx-auto flex h-14 w-14 items-center justify-center rounded-xl transition-colors ${feature.colorClass}`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      >
+                        <feature.icon className={`h-7 w-7 ${feature.iconColor}`} />
+                      </motion.div>
+                      <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
+                        {feature.title}
+                      </h3>
+                      <p className="mt-2 font-body text-sm text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -117,23 +101,31 @@ const Index = () => {
       {/* CTA Section */}
       <section className="bg-muted py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+          <motion.div
+            className="mx-auto max-w-3xl text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
               Ready to Excel?
             </h2>
             <p className="mt-4 font-body text-lg text-muted-foreground">
               Join hundreds of students who have transformed their academic journey with EduPro.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="mt-8 font-body"
+            <motion.div
+              className="mt-8"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <Link to="/our-team">
-                Find Your Tutor <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+              <Button asChild size="lg" className="font-body">
+                <Link to="/our-team">
+                  Find Your Tutor <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </Layout>
