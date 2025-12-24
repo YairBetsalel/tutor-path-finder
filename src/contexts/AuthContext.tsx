@@ -82,13 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .limit(10);
 
     if (data && data.length > 0) {
-      // Calculate average of last 10 ratings
+      // Calculate average of last 10 ratings (rounded to 1 decimal)
+      const round = (n: number) => Math.round(n * 10) / 10;
       const avgMetrics = {
-        focus: Math.round(data.reduce((sum, r) => sum + r.focus, 0) / data.length),
-        skill: Math.round(data.reduce((sum, r) => sum + r.skill, 0) / data.length),
-        revision: Math.round(data.reduce((sum, r) => sum + r.revision, 0) / data.length),
-        attitude: Math.round(data.reduce((sum, r) => sum + r.attitude, 0) / data.length),
-        potential: Math.round(data.reduce((sum, r) => sum + r.potential, 0) / data.length),
+        focus: round(data.reduce((sum, r) => sum + r.focus, 0) / data.length),
+        skill: round(data.reduce((sum, r) => sum + r.skill, 0) / data.length),
+        revision: round(data.reduce((sum, r) => sum + r.revision, 0) / data.length),
+        attitude: round(data.reduce((sum, r) => sum + r.attitude, 0) / data.length),
+        potential: round(data.reduce((sum, r) => sum + r.potential, 0) / data.length),
       };
       setMetrics(avgMetrics);
     } else {
