@@ -22,6 +22,7 @@ import ProfilePage from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
+// Main App component with providers
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
