@@ -1,73 +1,189 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
-interface UserProfile {
-  letter: string;
-  color: string;
-  metrics: {
-    focus: number;
-    skill: number;
-    revision: number;
-    attitude: number;
-    potential: number;
-  };
+interface Profile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_color: string;
+  avatar_letter: string;
+}
+
+interface Metrics {
+  focus: number;
+  skill: number;
+  revision: number;
+  attitude: number;
+  potential: number;
 }
 
 interface AuthContextType {
-  isLoggedIn: boolean;
-  user: UserProfile | null;
-  login: () => void;
-  logout: () => void;
+  user: User | null;
+  session: Session | null;
+  profile: Profile | null;
+  metrics: Metrics;
+  isAdmin: boolean;
+  isLoading: boolean;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signOut: () => Promise<void>;
+  refreshMetrics: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const generateRandomColor = () => {
-  const colors = [
-    'hsl(175, 75%, 25%)', // Teal
-    'hsl(14, 65%, 55%)',   // Coral
-    'hsl(43, 74%, 50%)',   // Gold
-    'hsl(220, 60%, 50%)',  // Blue
-    'hsl(280, 50%, 50%)',  // Purple
-    'hsl(340, 60%, 50%)',  // Pink
-    'hsl(150, 50%, 40%)',  // Green
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
+const DEFAULT_METRICS: Metrics = {
+  focus: 1,
+  skill: 1,
+  revision: 1,
+  attitude: 1,
+  potential: 1,
 };
-
-const generateRandomLetter = () => {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  return letters[Math.floor(Math.random() * letters.length)];
-};
-
-const generateRandomMetric = () => Math.floor(Math.random() * 5) + 1;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [metrics, setMetrics] = useState<Metrics>(DEFAULT_METRICS);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback(() => {
-    const newUser: UserProfile = {
-      letter: generateRandomLetter(),
-      color: generateRandomColor(),
-      metrics: {
-        focus: generateRandomMetric(),
-        skill: generateRandomMetric(),
-        revision: generateRandomMetric(),
-        attitude: generateRandomMetric(),
-        potential: generateRandomMetric(),
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (data && !error) {
+      setProfile(data);
+    }
+  };
+
+  const checkAdminRole = async (userId: string) => {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    setIsAdmin(!!data);
+  };
+
+  const fetchMetrics = async (userId: string) => {
+    // Get last 10 lesson ratings for this student
+    const { data } = await supabase
+      .from('lesson_ratings')
+      .select('focus, skill, revision, attitude, potential')
+      .eq('student_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (data && data.length > 0) {
+      // Calculate average of last 10 ratings
+      const avgMetrics = {
+        focus: Math.round(data.reduce((sum, r) => sum + r.focus, 0) / data.length),
+        skill: Math.round(data.reduce((sum, r) => sum + r.skill, 0) / data.length),
+        revision: Math.round(data.reduce((sum, r) => sum + r.revision, 0) / data.length),
+        attitude: Math.round(data.reduce((sum, r) => sum + r.attitude, 0) / data.length),
+        potential: Math.round(data.reduce((sum, r) => sum + r.potential, 0) / data.length),
+      };
+      setMetrics(avgMetrics);
+    } else {
+      setMetrics(DEFAULT_METRICS);
+    }
+  };
+
+  const refreshMetrics = async () => {
+    if (user) {
+      await fetchMetrics(user.id);
+    }
+  };
+
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        // Defer Supabase calls with setTimeout
+        if (session?.user) {
+          setTimeout(() => {
+            fetchProfile(session.user.id);
+            checkAdminRole(session.user.id);
+            fetchMetrics(session.user.id);
+          }, 0);
+        } else {
+          setProfile(null);
+          setIsAdmin(false);
+          setMetrics(DEFAULT_METRICS);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+        checkAdminRole(session.user.id);
+        fetchMetrics(session.user.id);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          first_name: firstName || '',
+          last_name: lastName || '',
+        },
       },
-    };
-    setUser(newUser);
-    setIsLoggedIn(true);
-  }, []);
+    });
+    return { error };
+  };
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setIsLoggedIn(false);
-  }, []);
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { error };
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        profile,
+        metrics,
+        isAdmin,
+        isLoading,
+        signUp,
+        signIn,
+        signOut,
+        refreshMetrics,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,24 +1,73 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProgressBar } from '@/components/profile/ProgressBar';
 import { RadarChart } from '@/components/profile/RadarChart';
 import { LessonReviews } from '@/components/profile/LessonReviews';
-import { CalendarDays, BookOpen } from 'lucide-react';
+import { CalendarDays, BookOpen, Loader2 } from 'lucide-react';
+
+interface LessonRating {
+  id: string;
+  focus: number;
+  skill: number;
+  revision: number;
+  attitude: number;
+  potential: number;
+  notes: string | null;
+  created_at: string;
+  admin_id: string | null;
+}
 
 export default function ProfilePage() {
-  const { isLoggedIn, user } = useAuth();
+  const { user, profile, metrics, isLoading, refreshMetrics } = useAuth();
   const navigate = useNavigate();
+  const [ratings, setRatings] = useState<LessonRating[]>([]);
+  const [loadingRatings, setLoadingRatings] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/');
+    if (!isLoading && !user) {
+      navigate('/auth');
     }
-  }, [isLoggedIn, navigate]);
+  }, [user, isLoading, navigate]);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (user) {
+      fetchRatings();
+    }
+  }, [user]);
+
+  const fetchRatings = async () => {
+    if (!user) return;
+    
+    setLoadingRatings(true);
+    const { data } = await supabase
+      .from('lesson_ratings')
+      .select('*')
+      .eq('student_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (data) {
+      setRatings(data);
+      refreshMetrics();
+    }
+    setLoadingRatings(false);
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!user || !profile) return null;
 
   return (
     <Layout>
@@ -28,12 +77,14 @@ export default function ProfilePage() {
           <div className="mb-12 flex items-center gap-6">
             <div
               className="flex h-20 w-20 items-center justify-center rounded-full font-display text-3xl font-bold text-primary-foreground shadow-medium"
-              style={{ backgroundColor: user.color }}
+              style={{ backgroundColor: profile.avatar_color }}
             >
-              {user.letter}
+              {profile.avatar_letter}
             </div>
             <div>
-              <h1 className="font-display text-3xl font-bold text-foreground">My Profile</h1>
+              <h1 className="font-display text-3xl font-bold text-foreground">
+                {profile.first_name || 'Student'} {profile.last_name || ''}
+              </h1>
               <p className="mt-1 font-body text-muted-foreground">
                 Track your progress and view your learning journey.
               </p>
@@ -50,21 +101,24 @@ export default function ProfilePage() {
                     <BookOpen className="h-5 w-5 text-primary" />
                     Progress & Metrics
                   </CardTitle>
+                  <p className="font-body text-sm text-muted-foreground">
+                    Average of your last {ratings.length || 0} lesson ratings
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-8 md:grid-cols-2">
                     {/* Progress Bars */}
                     <div className="space-y-6">
-                      <ProgressBar label="Focus" value={user.metrics.focus} />
-                      <ProgressBar label="Skill" value={user.metrics.skill} />
-                      <ProgressBar label="Revision" value={user.metrics.revision} />
-                      <ProgressBar label="Attitude" value={user.metrics.attitude} />
-                      <ProgressBar label="Potential" value={user.metrics.potential} />
+                      <ProgressBar label="Focus" value={metrics.focus} />
+                      <ProgressBar label="Skill" value={metrics.skill} />
+                      <ProgressBar label="Revision" value={metrics.revision} />
+                      <ProgressBar label="Attitude" value={metrics.attitude} />
+                      <ProgressBar label="Potential" value={metrics.potential} />
                     </div>
 
                     {/* Radar Chart */}
                     <div className="flex items-center justify-center">
-                      <RadarChart metrics={user.metrics} />
+                      <RadarChart metrics={metrics} />
                     </div>
                   </div>
                 </CardContent>
@@ -73,7 +127,7 @@ export default function ProfilePage() {
               {/* Lesson Reviews */}
               <Card className="shadow-medium">
                 <CardContent className="pt-6">
-                  <LessonReviews />
+                  <LessonReviews ratings={ratings} loading={loadingRatings} />
                 </CardContent>
               </Card>
             </div>
