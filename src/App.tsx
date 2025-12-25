@@ -18,6 +18,7 @@ import OurTeamPage from "./pages/OurTeam";
 import TutorManagementPage from "./pages/admin/TutorManagement";
 import StudentRatingsPage from "./pages/admin/StudentRatings";
 import CalendarPage from "./pages/admin/Calendar";
+import RolesManagementPage from "./pages/admin/RolesManagement";
 import ProfilePage from "./pages/Profile";
 import EnquirePage from "./pages/Enquire";
 
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/admin/tutors" element={<TutorManagementPage />} />
               <Route path="/admin/students" element={<StudentRatingsPage />} />
               <Route path="/admin/calendar" element={<CalendarPage />} />
+              <Route path="/admin/roles" element={<RolesManagementPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/enquire" element={<EnquirePage />} />
               <Route path="*" element={<NotFound />} />

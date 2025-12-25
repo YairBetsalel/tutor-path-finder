@@ -68,6 +68,27 @@ export type Database = {
           },
         ]
       }
+      parent_child_bonds: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          parent_id: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          parent_id: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_color: string | null
@@ -118,6 +139,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      find_parent_by_email: {
+        Args: { parent_email: string }
+        Returns: {
+          id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -127,7 +154,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "student"
+      app_role: "admin" | "student" | "parent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -255,7 +282,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "student"],
+      app_role: ["admin", "student", "parent"],
     },
   },
 } as const

@@ -18,17 +18,30 @@ interface Metrics {
   potential: number;
 }
 
+interface BondedChild {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_color: string;
+  avatar_letter: string;
+}
+
+type AppRole = 'admin' | 'student' | 'parent';
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   metrics: Metrics;
   isAdmin: boolean;
+  userRole: AppRole;
+  bondedChildren: BondedChild[];
   isLoading: boolean;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshMetrics: () => Promise<void>;
+  refreshBondedChildren: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,6 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [metrics, setMetrics] = useState<Metrics>(DEFAULT_METRICS);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<AppRole>('student');
+  const [bondedChildren, setBondedChildren] = useState<BondedChild[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
@@ -61,15 +76,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const checkAdminRole = async (userId: string) => {
+  const fetchUserRole = async (userId: string) => {
     const { data } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
-      .eq('role', 'admin')
       .maybeSingle();
 
-    setIsAdmin(!!data);
+    const role = (data?.role as AppRole) || 'student';
+    setUserRole(role);
+    setIsAdmin(role === 'admin');
+  };
+
+  const fetchBondedChildren = async (userId: string) => {
+    const { data: bonds } = await supabase
+      .from('parent_child_bonds')
+      .select('child_id')
+      .eq('parent_id', userId);
+
+    if (bonds && bonds.length > 0) {
+      const childIds = bonds.map((b) => b.child_id);
+      const { data: children } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, avatar_color, avatar_letter')
+        .in('id', childIds);
+
+      if (children) {
+        setBondedChildren(children);
+      }
+    } else {
+      setBondedChildren([]);
+    }
+  };
+
+  const refreshBondedChildren = async () => {
+    if (user) {
+      await fetchBondedChildren(user.id);
+    }
   };
 
   const fetchMetrics = async (userId: string) => {
@@ -114,12 +157,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           setTimeout(() => {
             fetchProfile(session.user.id);
-            checkAdminRole(session.user.id);
+            fetchUserRole(session.user.id);
             fetchMetrics(session.user.id);
+            fetchBondedChildren(session.user.id);
           }, 0);
         } else {
           setProfile(null);
           setIsAdmin(false);
+          setUserRole('student');
+          setBondedChildren([]);
           setMetrics(DEFAULT_METRICS);
         }
         setIsLoading(false);
@@ -132,8 +178,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
-        checkAdminRole(session.user.id);
+        fetchUserRole(session.user.id);
         fetchMetrics(session.user.id);
+        fetchBondedChildren(session.user.id);
       }
       setIsLoading(false);
     });
@@ -178,11 +225,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         metrics,
         isAdmin,
+        userRole,
+        bondedChildren,
         isLoading,
         signUp,
         signIn,
         signOut,
         refreshMetrics,
+        refreshBondedChildren,
       }}
     >
       {children}
