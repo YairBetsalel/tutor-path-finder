@@ -72,7 +72,7 @@ export default function OurTeamPage() {
 
   const handleSubjectChange = (subject: Subject | null) => {
     setSelectedSubject(subject);
-    setSelectedQualifications([]); // Reset qualifications when subject changes
+    // Don't reset qualifications - allow multi-category selection
   };
 
   return (

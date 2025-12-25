@@ -55,7 +55,16 @@ export default function TutorManagementPage() {
     setFormData(defaultFormData);
   };
 
-  const availableQualifications = SUBJECT_QUALIFICATIONS[formData.subject] || SUBJECT_QUALIFICATIONS.General;
+  // Combine all qualifications from all subjects for selection
+  const allQualifications = Object.entries(SUBJECT_QUALIFICATIONS).flatMap(([subject, quals]) => 
+    quals.map(qual => ({ subject, qual }))
+  );
+  
+  // Get qualifications grouped by subject for display
+  const qualificationsBySubject = SUBJECTS.reduce((acc, subject) => {
+    acc[subject] = SUBJECT_QUALIFICATIONS[subject] || [];
+    return acc;
+  }, {} as Record<string, readonly string[]>);
 
   const toggleStandardQualification = (qual: string) => {
     setFormData(prev => ({
@@ -145,11 +154,11 @@ export default function TutorManagementPage() {
 
       {/* Subject Selection */}
       <div className="grid gap-2">
-        <Label htmlFor="subject" className="font-body">Subject Area</Label>
+        <Label htmlFor="subject" className="font-body">Primary Subject Area</Label>
         <Select
           value={formData.subject}
           onValueChange={(value: Subject) =>
-            setFormData({ ...formData, subject: value, standardQualifications: [] })
+            setFormData({ ...formData, subject: value })
           }
         >
           <SelectTrigger className="font-body">
@@ -163,32 +172,33 @@ export default function TutorManagementPage() {
         </Select>
       </div>
 
-      {/* Part A: Standard Qualifications */}
-      <div className="space-y-3">
+      {/* Part A: Standard Qualifications - Grouped by Subject */}
+      <div className="space-y-4">
         <div>
           <Label className="font-body">Standard Qualifications</Label>
           <p className="mt-1 font-body text-xs text-muted-foreground">
-            Select from pre-defined qualifications for {formData.subject}
+            Select qualifications from any subject area
           </p>
         </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={formData.subject}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex flex-wrap gap-2"
-          >
-            {availableQualifications.map((qual) => (
-              <QualificationChip
-                key={qual}
-                label={qual}
-                selected={formData.standardQualifications.includes(qual)}
-                onToggle={() => toggleStandardQualification(qual)}
-              />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        <div className="space-y-4 max-h-64 overflow-y-auto rounded-lg border border-border p-4">
+          {SUBJECTS.map((subject) => (
+            <div key={subject} className="space-y-2">
+              <p className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {subject}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {qualificationsBySubject[subject]?.map((qual) => (
+                  <QualificationChip
+                    key={`${subject}-${qual}`}
+                    label={qual}
+                    selected={formData.standardQualifications.includes(qual)}
+                    onToggle={() => toggleStandardQualification(qual)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Part B: Custom Qualifications */}
