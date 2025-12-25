@@ -113,6 +113,9 @@ export function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link to="/admin/calendar" className="w-full cursor-pointer">Calendar</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/roles" className="w-full cursor-pointer">Roles</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -179,6 +182,7 @@ export function Navbar() {
                 <Link to="/admin/tutors" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Tutors</Link>
                 <Link to="/admin/students" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Student Ratings</Link>
                 <Link to="/admin/calendar" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Calendar</Link>
+                <Link to="/admin/roles" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Roles</Link>
               </div>
             )}
             <div className="border-t border-border pt-2">
