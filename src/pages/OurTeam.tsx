@@ -1,47 +1,124 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from '@/components/layout/Layout';
 import { TutorCard } from '@/components/tutors/TutorCard';
-import { useTutors } from '@/contexts/TutorContext';
 import { Input } from '@/components/ui/input';
 import { AnimatedToggle } from '@/components/ui/animated-toggle';
 import { StaggeredContainer, StaggeredItem } from '@/components/ui/staggered-container';
 import { EmptyState } from '@/components/ui/empty-state';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { SUBJECTS, getQualificationsForSubject, Subject } from '@/lib/qualifications';
+import { supabase } from '@/integrations/supabase/client';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  bio: string;
+  position: 'Management' | 'Tutor';
+  subject: string;
+  standardQualifications: string[];
+  customQualifications: string[];
+  imageColor: string;
+}
 
 export default function OurTeamPage() {
-  const { tutors } = useTutors();
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showManagement, setShowManagement] = useState(true);
   const [showTutors, setShowTutors] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedQualifications, setSelectedQualifications] = useState<string[]>([]);
 
+  useEffect(() => {
+    fetchTeamMembers();
+  }, []);
+
+  const fetchTeamMembers = async () => {
+    setLoading(true);
+    
+    // Fetch all admin and tutor user_ids
+    const { data: rolesData, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id, role')
+      .in('role', ['admin', 'tutor']);
+
+    if (rolesError || !rolesData) {
+      console.error('Error fetching roles:', rolesError);
+      setLoading(false);
+      return;
+    }
+
+    const userIds = rolesData.map(r => r.user_id);
+    const roleMap = new Map(rolesData.map(r => [r.user_id, r.role]));
+
+    // Fetch profiles
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', userIds);
+
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError);
+      setLoading(false);
+      return;
+    }
+
+    // Fetch tutor profiles
+    const { data: tutorProfilesData } = await supabase
+      .from('tutor_profiles')
+      .select('*')
+      .in('user_id', userIds);
+
+    const tutorProfileMap = new Map(
+      (tutorProfilesData || []).map(tp => [tp.user_id, tp])
+    );
+
+    // Build team members
+    const members: TeamMember[] = (profilesData || []).map(profile => {
+      const role = roleMap.get(profile.id);
+      const tutorProfile = tutorProfileMap.get(profile.id);
+      
+      return {
+        id: profile.id,
+        name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Team Member',
+        bio: tutorProfile?.bio || '',
+        position: role === 'admin' ? 'Management' : 'Tutor',
+        subject: tutorProfile?.subject || 'General',
+        standardQualifications: tutorProfile?.standard_qualifications || [],
+        customQualifications: tutorProfile?.custom_qualifications || [],
+        imageColor: profile.avatar_color || '#0A4D4A',
+      };
+    });
+
+    setTeamMembers(members);
+    setLoading(false);
+  };
+
   const subjectQualifications = useMemo(() => 
     getQualificationsForSubject(selectedSubject),
     [selectedSubject]
   );
 
-  const filteredTutors = useMemo(() => {
-    return tutors.filter((tutor) => {
+  const filteredMembers = useMemo(() => {
+    return teamMembers.filter((member) => {
       // Position filter (AND logic)
       const matchesPosition =
-        (showManagement && tutor.position === 'Management') ||
-        (showTutors && tutor.position === 'Tutor');
+        (showManagement && member.position === 'Management') ||
+        (showTutors && member.position === 'Tutor');
       
       if (!matchesPosition) return false;
 
       // Subject filter (AND logic)
-      if (selectedSubject && tutor.subject !== selectedSubject) {
+      if (selectedSubject && member.subject !== selectedSubject) {
         return false;
       }
 
       // Qualification filter (OR logic within selected qualifications)
       if (selectedQualifications.length > 0) {
-        const allTutorQuals = [...tutor.standardQualifications, ...tutor.customQualifications];
+        const allMemberQuals = [...member.standardQualifications, ...member.customQualifications];
         const hasMatchingQual = selectedQualifications.some(qual =>
-          allTutorQuals.some(tq => tq.toLowerCase().includes(qual.toLowerCase()))
+          allMemberQuals.some(mq => mq.toLowerCase().includes(qual.toLowerCase()))
         );
         if (!hasMatchingQual) return false;
       }
@@ -49,18 +126,18 @@ export default function OurTeamPage() {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
-        const allQuals = [...tutor.standardQualifications, ...tutor.customQualifications].join(' ').toLowerCase();
+        const allQuals = [...member.standardQualifications, ...member.customQualifications].join(' ').toLowerCase();
         return (
-          tutor.name.toLowerCase().includes(query) ||
+          member.name.toLowerCase().includes(query) ||
           allQuals.includes(query) ||
-          tutor.bio.toLowerCase().includes(query) ||
-          tutor.subject.toLowerCase().includes(query)
+          member.bio.toLowerCase().includes(query) ||
+          member.subject.toLowerCase().includes(query)
         );
       }
 
       return true;
     });
-  }, [tutors, showManagement, showTutors, searchQuery, selectedSubject, selectedQualifications]);
+  }, [teamMembers, showManagement, showTutors, searchQuery, selectedSubject, selectedQualifications]);
 
   const toggleQualification = (qual: string) => {
     setSelectedQualifications(prev =>
@@ -196,24 +273,28 @@ export default function OurTeamPage() {
             </AnimatePresence>
           </motion.div>
 
-          {/* Tutor Grid */}
+          {/* Team Grid */}
           <AnimatePresence mode="wait">
-            {filteredTutors.length > 0 ? (
+            {loading ? (
+              <div className="mt-12 flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : filteredMembers.length > 0 ? (
               <StaggeredContainer
                 key={`grid-${selectedSubject}-${selectedQualifications.join('-')}`}
                 className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
                 animationKey={`${selectedSubject}-${searchQuery}`}
               >
-                {filteredTutors.map((tutor) => (
-                  <StaggeredItem key={tutor.id}>
-                    <TutorCard tutor={tutor} />
+                {filteredMembers.map((member) => (
+                  <StaggeredItem key={member.id}>
+                    <TutorCard tutor={member} />
                   </StaggeredItem>
                 ))}
               </StaggeredContainer>
             ) : (
               <EmptyState
-                title="No tutors found"
-                description="Try adjusting your filters or search terms to find the right tutor for you."
+                title="No team members found"
+                description="Try adjusting your filters or search terms to find the right team member."
                 type="search"
               />
             )}

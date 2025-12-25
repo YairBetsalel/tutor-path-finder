@@ -140,6 +140,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tutor_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          custom_qualifications: string[] | null
+          id: string
+          standard_qualifications: string[] | null
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          custom_qualifications?: string[] | null
+          id?: string
+          standard_qualifications?: string[] | null
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          custom_qualifications?: string[] | null
+          id?: string
+          standard_qualifications?: string[] | null
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

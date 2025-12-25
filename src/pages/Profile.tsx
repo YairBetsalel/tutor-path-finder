@@ -9,6 +9,7 @@ import { ProgressBar } from '@/components/profile/ProgressBar';
 import { RadarChart } from '@/components/profile/RadarChart';
 import { LessonReviews } from '@/components/profile/LessonReviews';
 import { BondRequestDialog } from '@/components/profile/BondRequestDialog';
+import { TutorProfileEditor } from '@/components/profile/TutorProfileEditor';
 import { CalendarDays, BookOpen, Loader2, UserPlus, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
@@ -290,7 +291,20 @@ export default function ProfilePage() {
     );
   }
 
-  // Student/Admin view - show own profile
+  // Tutor/Admin view - show qualifications editor
+  if (userRole === 'tutor' || userRole === 'admin') {
+    return (
+      <Layout>
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <TutorProfileEditor />
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  // Student view - show own profile with progress
   return (
     <Layout>
       <section className="py-20">
