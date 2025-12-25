@@ -110,9 +110,32 @@ export default function StudentRatingsPage() {
 
   const fetchStudents = async () => {
     setLoading(true);
+    
+    // First get all user IDs with 'student' role
+    const { data: studentRoles, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', 'student');
+    
+    if (rolesError) {
+      toast.error('Failed to load students');
+      setLoading(false);
+      return;
+    }
+    
+    const studentIds = studentRoles?.map(r => r.user_id) || [];
+    
+    if (studentIds.length === 0) {
+      setStudents([]);
+      setLoading(false);
+      return;
+    }
+    
+    // Then fetch profiles for those students only
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
+      .in('id', studentIds)
       .order('created_at', { ascending: false });
 
     if (error) {
