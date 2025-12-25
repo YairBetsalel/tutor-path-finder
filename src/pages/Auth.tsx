@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Loader2, GraduationCap, Users } from 'lucide-react';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -25,6 +26,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState<'student' | 'parent'>('student');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export default function AuthPage() {
     }
 
     setSubmitting(true);
-    const { error } = await signUp(email, password, firstName, lastName);
+    const { error } = await signUp(email, password, firstName, lastName, role);
     setSubmitting(false);
 
     if (error) {
@@ -177,6 +179,43 @@ export default function AuthPage() {
 
                   <TabsContent value="signup">
                     <form onSubmit={handleSignup} className="mt-4 space-y-4">
+                      <div className="space-y-2">
+                        <Label className="font-body">I am a...</Label>
+                        <RadioGroup
+                          value={role}
+                          onValueChange={(value) => setRole(value as 'student' | 'parent')}
+                          className="grid grid-cols-2 gap-4"
+                        >
+                          <Label
+                            htmlFor="role-student"
+                            className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all ${
+                              role === 'student'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <RadioGroupItem value="student" id="role-student" className="sr-only" />
+                            <GraduationCap className={`h-8 w-8 ${role === 'student' ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <span className={`font-body font-medium ${role === 'student' ? 'text-primary' : 'text-muted-foreground'}`}>
+                              Student
+                            </span>
+                          </Label>
+                          <Label
+                            htmlFor="role-parent"
+                            className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all ${
+                              role === 'parent'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <RadioGroupItem value="parent" id="role-parent" className="sr-only" />
+                            <Users className={`h-8 w-8 ${role === 'parent' ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <span className={`font-body font-medium ${role === 'parent' ? 'text-primary' : 'text-muted-foreground'}`}>
+                              Parent
+                            </span>
+                          </Label>
+                        </RadioGroup>
+                      </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="first-name" className="font-body">First Name</Label>
