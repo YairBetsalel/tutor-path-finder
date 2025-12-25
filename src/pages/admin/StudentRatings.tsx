@@ -45,6 +45,44 @@ const defaultRating: RatingForm = {
   notes: '',
 };
 
+// RatingSlider component defined outside to prevent re-creation on every render
+function RatingSlider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <Label className="font-body">{label}</Label>
+        <span className="flex items-center gap-1 font-display text-lg font-bold text-primary">
+          {value}
+          <Star className="h-4 w-4 fill-primary" />
+        </span>
+      </div>
+      <Slider
+        value={[value]}
+        onValueChange={([v]) => onChange(v)}
+        min={1}
+        max={5}
+        step={1}
+        className="w-full"
+      />
+      <div className="flex justify-between font-body text-xs text-muted-foreground">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+      </div>
+    </div>
+  );
+}
+
 export default function StudentRatingsPage() {
   const { user, isAdmin, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -116,40 +154,6 @@ export default function StudentRatingsPage() {
     }
   };
 
-  const RatingSlider = ({
-    label,
-    value,
-    onChange,
-  }: {
-    label: string;
-    value: number;
-    onChange: (value: number) => void;
-  }) => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className="font-body">{label}</Label>
-        <span className="flex items-center gap-1 font-display text-lg font-bold text-primary">
-          {value}
-          <Star className="h-4 w-4 fill-primary" />
-        </span>
-      </div>
-      <Slider
-        value={[value]}
-        onValueChange={([v]) => onChange(v)}
-        min={1}
-        max={5}
-        step={1}
-        className="w-full"
-      />
-      <div className="flex justify-between font-body text-xs text-muted-foreground">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-      </div>
-    </div>
-  );
 
   if (isLoading || loading) {
     return (
