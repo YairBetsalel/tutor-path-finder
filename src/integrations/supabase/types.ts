@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      bond_requests: {
+        Row: {
+          child_id: string
+          created_at: string
+          id: string
+          parent_id: string
+          status: string
+        }
+        Insert: {
+          child_id: string
+          created_at?: string
+          id?: string
+          parent_id: string
+          status?: string
+        }
+        Update: {
+          child_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       lesson_ratings: {
         Row: {
           admin_id: string | null
@@ -143,6 +167,14 @@ export type Database = {
         Args: { parent_email: string }
         Returns: {
           id: string
+        }[]
+      }
+      find_student_by_name_or_email: {
+        Args: { search_term: string }
+        Returns: {
+          first_name: string
+          id: string
+          last_name: string
         }[]
       }
       has_role: {

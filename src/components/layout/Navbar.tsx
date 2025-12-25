@@ -13,7 +13,7 @@ import {
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, profile, isAdmin, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut, userRole, bondedChildren } = useAuth();
   const navigate = useNavigate();
 
   const handleEnquire = () => {
@@ -132,9 +132,24 @@ export function Navbar() {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-popover">
-                <DropdownMenuItem asChild>
-                  <Link to="/profile" className="w-full cursor-pointer">My Profile</Link>
-                </DropdownMenuItem>
+                {userRole === 'parent' ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/add-child-account" className="w-full cursor-pointer">Add Child Account</Link>
+                    </DropdownMenuItem>
+                    {bondedChildren.map((child) => (
+                      <DropdownMenuItem key={child.id} asChild>
+                        <Link to="/profile" className="w-full cursor-pointer">
+                          {child.first_name || 'Child'}'s Profile
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="w-full cursor-pointer">My Profile</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                   Logout
                 </DropdownMenuItem>
@@ -188,7 +203,18 @@ export function Navbar() {
             <div className="border-t border-border pt-2">
               {user && profile ? (
                 <>
-                  <Link to="/profile" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>My Profile</Link>
+                  {userRole === 'parent' ? (
+                    <>
+                      <Link to="/add-child-account" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Add Child Account</Link>
+                      {bondedChildren.map((child) => (
+                        <Link key={child.id} to="/profile" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>
+                          {child.first_name || 'Child'}'s Profile
+                        </Link>
+                      ))}
+                    </>
+                  ) : (
+                    <Link to="/profile" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>My Profile</Link>
+                  )}
                   <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full rounded-lg px-3 py-2 text-left hover:bg-muted">Logout</button>
                 </>
               ) : (

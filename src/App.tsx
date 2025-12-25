@@ -20,6 +20,7 @@ import StudentRatingsPage from "./pages/admin/StudentRatings";
 import CalendarPage from "./pages/admin/Calendar";
 import RolesManagementPage from "./pages/admin/RolesManagement";
 import ProfilePage from "./pages/Profile";
+import AddChildAccountPage from "./pages/AddChildAccount";
 import EnquirePage from "./pages/Enquire";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/admin/calendar" element={<CalendarPage />} />
               <Route path="/admin/roles" element={<RolesManagementPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/add-child-account" element={<AddChildAccountPage />} />
               <Route path="/enquire" element={<EnquirePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
