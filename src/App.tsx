@@ -19,6 +19,7 @@ import TutorManagementPage from "./pages/admin/TutorManagement";
 import StudentRatingsPage from "./pages/admin/StudentRatings";
 import CalendarPage from "./pages/admin/Calendar";
 import ProfilePage from "./pages/Profile";
+import EnquirePage from "./pages/Enquire";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/admin/students" element={<StudentRatingsPage />} />
               <Route path="/admin/calendar" element={<CalendarPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/enquire" element={<EnquirePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
