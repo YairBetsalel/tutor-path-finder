@@ -13,7 +13,7 @@ import {
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, profile, isAdmin, signOut, userRole, bondedChildren } = useAuth();
+  const { user, profile, isAdmin, isTutor, signOut, userRole, bondedChildren } = useAuth();
   const navigate = useNavigate();
 
   const handleEnquire = () => {
@@ -120,6 +120,28 @@ export function Navbar() {
             </DropdownMenu>
           )}
 
+          {/* Tutor Dropdown - only show if tutor */}
+          {isTutor && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-1 font-body">
+                  Tutor <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 bg-popover">
+                <DropdownMenuItem asChild>
+                  <Link to="/tutor/bookings" className="w-full cursor-pointer">My Bookings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/tutor/availability" className="w-full cursor-pointer">My Availability</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/tutor/students" className="w-full cursor-pointer">Student Ratings</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           {/* Auth */}
           {user && profile ? (
             <DropdownMenu>
@@ -198,6 +220,14 @@ export function Navbar() {
                 <Link to="/admin/students" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Student Ratings</Link>
                 <Link to="/admin/calendar" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Calendar</Link>
                 <Link to="/admin/roles" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Roles</Link>
+              </div>
+            )}
+            {isTutor && (
+              <div className="space-y-1">
+                <p className="px-3 text-xs font-semibold uppercase text-muted-foreground">Tutor</p>
+                <Link to="/tutor/bookings" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>My Bookings</Link>
+                <Link to="/tutor/availability" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>My Availability</Link>
+                <Link to="/tutor/students" className="block rounded-lg px-3 py-2 hover:bg-muted" onClick={() => setMobileMenuOpen(false)}>Student Ratings</Link>
               </div>
             )}
             <div className="border-t border-border pt-2">

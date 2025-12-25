@@ -14,11 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Shield, User, Users, Loader2 } from 'lucide-react';
+import { Search, Shield, User, Users, Loader2, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-type AppRole = 'admin' | 'student' | 'parent';
+type AppRole = 'admin' | 'student' | 'parent' | 'tutor';
 
 interface UserWithRole {
   id: string;
@@ -34,12 +34,14 @@ const roleColors: Record<AppRole, string> = {
   admin: 'bg-destructive/20 text-destructive',
   student: 'bg-primary/20 text-primary',
   parent: 'bg-secondary/20 text-secondary-foreground',
+  tutor: 'bg-accent/20 text-accent-foreground',
 };
 
 const roleIcons: Record<AppRole, React.ReactNode> = {
   admin: <Shield className="h-4 w-4" />,
   student: <User className="h-4 w-4" />,
   parent: <Users className="h-4 w-4" />,
+  tutor: <GraduationCap className="h-4 w-4" />,
 };
 
 export default function RolesManagementPage() {
@@ -189,12 +191,12 @@ export default function RolesManagementPage() {
 
           {/* Role Stats */}
           <motion.div
-            className="mb-8 grid gap-4 sm:grid-cols-3"
+            className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            {(['admin', 'student', 'parent'] as AppRole[]).map((role) => (
+            {(['admin', 'tutor', 'student', 'parent'] as AppRole[]).map((role) => (
               <Card key={role} className="shadow-soft">
                 <CardContent className="flex items-center gap-4 p-4">
                   <div className={`rounded-full p-2 ${roleColors[role]}`}>
@@ -274,6 +276,7 @@ export default function RolesManagementPage() {
                             </SelectTrigger>
                             <SelectContent className="bg-popover">
                               <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="tutor">Tutor</SelectItem>
                               <SelectItem value="student">Student</SelectItem>
                               <SelectItem value="parent">Parent</SelectItem>
                             </SelectContent>

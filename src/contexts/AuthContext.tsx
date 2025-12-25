@@ -26,7 +26,7 @@ interface BondedChild {
   avatar_letter: string;
 }
 
-type AppRole = 'admin' | 'student' | 'parent';
+type AppRole = 'admin' | 'student' | 'parent' | 'tutor';
 
 interface AuthContextType {
   user: User | null;
@@ -34,6 +34,7 @@ interface AuthContextType {
   profile: Profile | null;
   metrics: Metrics;
   isAdmin: boolean;
+  isTutor: boolean;
   userRole: AppRole;
   bondedChildren: BondedChild[];
   isLoading: boolean;
@@ -60,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [metrics, setMetrics] = useState<Metrics>(DEFAULT_METRICS);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isTutor, setIsTutor] = useState(false);
   const [userRole, setUserRole] = useState<AppRole>('student');
   const [bondedChildren, setBondedChildren] = useState<BondedChild[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,8 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const role = (data?.role as AppRole) || 'student';
     setUserRole(role);
     setIsAdmin(role === 'admin');
+    setIsTutor(role === 'tutor');
   };
-
   const fetchBondedChildren = async (userId: string) => {
     const { data: bonds } = await supabase
       .from('parent_child_bonds')
@@ -164,6 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null);
           setIsAdmin(false);
+          setIsTutor(false);
           setUserRole('student');
           setBondedChildren([]);
           setMetrics(DEFAULT_METRICS);
@@ -220,6 +223,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
     setProfile(null);
     setIsAdmin(false);
+    setIsTutor(false);
     setUserRole('student');
     setBondedChildren([]);
     setMetrics(DEFAULT_METRICS);
@@ -236,6 +240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         metrics,
         isAdmin,
+        isTutor,
         userRole,
         bondedChildren,
         isLoading,
