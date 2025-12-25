@@ -9,9 +9,9 @@ export function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-hero">
-                <span className="font-display text-lg font-bold text-primary-foreground">E</span>
+                <span className="font-display text-lg font-bold text-primary-foreground">S</span>
               </div>
-              <span className="font-display text-xl font-bold text-foreground">EduPro</span>
+              <span className="font-display text-xl font-bold text-foreground">SparkedEducation</span>
             </Link>
             <p className="font-body text-sm text-muted-foreground">
               Empowering students to achieve academic excellence through personalized tutoring and mentorship.
@@ -51,7 +51,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-border pt-6">
           <p className="text-center font-body text-sm text-muted-foreground">
-            © {new Date().getFullYear()} EduPro Tutoring. All rights reserved.
+            © {new Date().getFullYear()} SparkedEducation. All rights reserved.
           </p>
         </div>
       </div>

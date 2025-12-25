@@ -54,7 +54,7 @@ const Index = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
-              Why Choose EduPro?
+              Why Choose SparkedEducation?
             </h2>
             <p className="mt-4 font-body text-lg text-muted-foreground">
               We combine academic excellence with personalized attention to help every student succeed.
@@ -112,7 +112,7 @@ const Index = () => {
               Ready to Excel?
             </h2>
             <p className="mt-4 font-body text-lg text-muted-foreground">
-              Join hundreds of students who have transformed their academic journey with EduPro.
+              Join hundreds of students who have transformed their academic journey with SparkedEducation.
             </p>
             <motion.div
               className="mt-8"
