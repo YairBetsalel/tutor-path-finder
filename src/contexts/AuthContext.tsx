@@ -214,7 +214,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Clear local state immediately
+    setUser(null);
+    setSession(null);
+    setProfile(null);
+    setIsAdmin(false);
+    setUserRole('student');
+    setBondedChildren([]);
+    setMetrics(DEFAULT_METRICS);
+    
+    // Then sign out from Supabase (use local scope to avoid server errors)
+    await supabase.auth.signOut({ scope: 'local' });
   };
 
   return (
