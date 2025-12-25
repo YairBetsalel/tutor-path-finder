@@ -22,6 +22,9 @@ import RolesManagementPage from "./pages/admin/RolesManagement";
 import ProfilePage from "./pages/Profile";
 import AddChildAccountPage from "./pages/AddChildAccount";
 import EnquirePage from "./pages/Enquire";
+import MyBookingsPage from "./pages/tutor/MyBookings";
+import MyAvailabilityPage from "./pages/tutor/MyAvailability";
+import TutorStudentRatingsPage from "./pages/tutor/TutorStudentRatings";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +51,9 @@ const App = () => (
               <Route path="/admin/students" element={<StudentRatingsPage />} />
               <Route path="/admin/calendar" element={<CalendarPage />} />
               <Route path="/admin/roles" element={<RolesManagementPage />} />
+              <Route path="/tutor/bookings" element={<MyBookingsPage />} />
+              <Route path="/tutor/availability" element={<MyAvailabilityPage />} />
+              <Route path="/tutor/students" element={<TutorStudentRatingsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/add-child-account" element={<AddChildAccountPage />} />
               <Route path="/enquire" element={<EnquirePage />} />
