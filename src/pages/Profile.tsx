@@ -1,18 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/profile/ProgressBar';
 import { RadarChart } from '@/components/profile/RadarChart';
 import { LessonReviews } from '@/components/profile/LessonReviews';
-import { CalendarDays, BookOpen, Loader2, UserPlus, X, Users } from 'lucide-react';
+import { BondRequestDialog } from '@/components/profile/BondRequestDialog';
+import { CalendarDays, BookOpen, Loader2, UserPlus, Users } from 'lucide-react';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface LessonRating {
   id: string;
@@ -43,12 +42,10 @@ interface ChildMetrics {
 }
 
 export default function ProfilePage() {
-  const { user, profile, metrics, isLoading, refreshMetrics, userRole, bondedChildren, refreshBondedChildren } = useAuth();
+  const { user, profile, metrics, isLoading, refreshMetrics, userRole, bondedChildren } = useAuth();
   const navigate = useNavigate();
   const [ratings, setRatings] = useState<LessonRating[]>([]);
   const [loadingRatings, setLoadingRatings] = useState(true);
-  const [parentEmail, setParentEmail] = useState('');
-  const [bondingLoading, setBondingLoading] = useState(false);
 
   // For parent view - selected child and their data
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
@@ -133,69 +130,6 @@ export default function ProfilePage() {
     setLoadingChildren(false);
   };
 
-  const handleBondParent = async () => {
-    if (!parentEmail.trim()) {
-      toast.error('Please enter a parent email');
-      return;
-    }
-
-    setBondingLoading(true);
-
-    // Find the parent user by email - we need to look up in auth.users via a function or by checking profiles
-    // Since we can't directly query auth.users, we'll use a workaround via checking if the parent has the parent role
-    // For now, we'll search by trying to find a profile and then check their role
-
-    // First, let's try to find the user by creating the bond directly
-    // The parent must exist and have signed up already
-    
-    // We'll need to get the parent's user_id by their email
-    // Since we can't query auth.users directly, we need an edge function or RPC
-    // For simplicity, let's create a simple approach: the admin assigns roles, and we look up by profile email
-    
-    // Actually, profiles don't store email. We need to use the auth.users table.
-    // Let's create an RPC function for this.
-    
-    // For now, let's use a simpler approach - we'll notify the user that this requires the parent to be registered
-    // and then use a workaround
-    
-    try {
-      // Find parent by email using the database function
-      const { data: parentData, error } = await supabase
-        .rpc('find_parent_by_email', { parent_email: parentEmail.toLowerCase().trim() } as any);
-
-      if (error || !parentData || (Array.isArray(parentData) && parentData.length === 0)) {
-        toast.error('No parent account found with this email. Make sure the parent has registered and has the Parent role.');
-        setBondingLoading(false);
-        return;
-      }
-
-      const parentResult = parentData as Array<{ id: string }> | { id: string } | null;
-      const parentId = Array.isArray(parentResult) ? parentResult[0]?.id : (parentResult as any)?.id;
-
-      // Create the bond
-      const { error: bondError } = await supabase
-        .from('parent_child_bonds')
-        .insert({
-          parent_id: parentId,
-          child_id: user?.id,
-        } as any);
-
-      if (bondError) {
-        if (bondError.code === '23505') {
-          toast.error('This parent is already linked to your account');
-        } else {
-          toast.error('Failed to link parent account');
-        }
-      } else {
-        toast.success('Parent account linked successfully!');
-        setParentEmail('');
-      }
-    } catch (err) {
-      toast.error('Failed to link parent account');
-    }
-
-    setBondingLoading(false);
-  };
 
   if (isLoading) {
     return (
@@ -340,8 +274,14 @@ export default function ProfilePage() {
                 <Users className="h-16 w-16 text-muted-foreground" />
                 <h2 className="mt-4 font-display text-xl font-bold">No Linked Children</h2>
                 <p className="mt-2 font-body text-muted-foreground">
-                  Your children need to add your email to their profile to link accounts.
+                  Add your child's account to view their progress.
                 </p>
+                <Button asChild className="mt-4 font-body">
+                  <Link to="/add-child-account">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Add Child Account
+                  </Link>
+                </Button>
               </div>
             )}
           </div>
@@ -438,55 +378,12 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Parent Bonding - only for students */}
-              {userRole === 'student' && (
-                <Card className="shadow-medium">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-display">
-                      <UserPlus className="h-5 w-5 text-primary" />
-                      Link Parent Account
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="mb-4 font-body text-sm text-muted-foreground">
-                      Enter your parent's email to allow them to view your progress.
-                    </p>
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="parentEmail" className="font-body">
-                          Parent's Email
-                        </Label>
-                        <Input
-                          id="parentEmail"
-                          type="email"
-                          placeholder="parent@example.com"
-                          value={parentEmail}
-                          onChange={(e) => setParentEmail(e.target.value)}
-                          className="mt-1 font-body"
-                        />
-                      </div>
-                      <Button
-                        onClick={handleBondParent}
-                        disabled={bondingLoading}
-                        className="w-full font-body"
-                      >
-                        {bondingLoading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <UserPlus className="mr-2 h-4 w-4" />
-                        )}
-                        Link Parent
-                      </Button>
-                    </div>
-                    <p className="mt-3 font-body text-xs text-muted-foreground">
-                      Note: Your parent must have a registered account with the "Parent" role.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
         </div>
+
+        {/* Bond request dialog for students */}
+        <BondRequestDialog />
       </section>
     </Layout>
   );
