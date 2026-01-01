@@ -16,12 +16,16 @@ import {
   isToday
 } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { AvailabilityDisplay } from '@/components/calendar/AvailabilityDisplay';
+import { useTutorAvailability } from '@/hooks/useTutorAvailability';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const today = startOfDay(new Date());
+
+  const { availability, isLoading } = useTutorAvailability(currentMonth);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -53,7 +57,7 @@ export default function CalendarPage() {
           <div className="mb-8">
             <h1 className="font-display text-3xl font-bold text-foreground">Calendar Management</h1>
             <p className="mt-2 font-body text-muted-foreground">
-              Manage tutor schedules and lesson bookings.
+              View tutor availability and manage lesson bookings.
             </p>
           </div>
 
@@ -117,12 +121,14 @@ export default function CalendarPage() {
                 {daysInMonth.map((day) => {
                   const isPast = isPastDay(day);
                   const isTodayDate = isToday(day);
+                  const dateKey = format(day, 'yyyy-MM-dd');
+                  const daySlots = availability[dateKey] || [];
                   
                   return (
                     <div
                       key={day.toISOString()}
                       className={cn(
-                        "aspect-square rounded-lg border p-2 transition-colors",
+                        "min-h-[100px] rounded-lg border p-2 transition-colors",
                         isPast 
                           ? "border-transparent bg-muted/30" 
                           : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 cursor-pointer",
@@ -138,14 +144,18 @@ export default function CalendarPage() {
                       >
                         {format(day, 'd')}
                       </span>
-                      {/* Availability content will go here */}
+                      
+                      {/* Show availability */}
+                      {daySlots.length > 0 && (
+                        <AvailabilityDisplay slots={daySlots} compact />
+                      )}
                     </div>
                   );
                 })}
               </div>
 
               {/* Legend */}
-              <div className="mt-6 flex items-center gap-6 border-t pt-4">
+              <div className="mt-6 flex flex-wrap items-center gap-6 border-t pt-4">
                 <div className="flex items-center gap-2">
                   <div className="h-4 w-4 rounded bg-muted/30" />
                   <span className="font-body text-sm text-muted-foreground">Past</span>
