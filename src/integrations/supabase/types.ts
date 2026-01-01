@@ -140,6 +140,36 @@ export type Database = {
         }
         Relationships: []
       }
+      tutor_availability: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string
+          id: string
+          start_time: string
+          tutor_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time: string
+          id?: string
+          start_time: string
+          tutor_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string
+          id?: string
+          start_time?: string
+          tutor_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tutor_profiles: {
         Row: {
           bio: string | null
