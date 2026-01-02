@@ -94,10 +94,10 @@ export function AddAvailabilityDialog({ date, onSuccess }: AddAvailabilityDialog
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
-          className="absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded bg-primary/10 text-primary opacity-0 transition-opacity hover:bg-primary/20 group-hover:opacity-100"
+          className="absolute left-1 top-8 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:scale-110 opacity-0 group-hover:opacity-100"
           onClick={(e) => e.stopPropagation()}
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-4 w-4" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
