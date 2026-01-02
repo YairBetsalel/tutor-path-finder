@@ -25,7 +25,7 @@ export function AvailabilityDisplay({ slots, compact = false }: AvailabilityDisp
   }
 
   return (
-    <div className={`mt-1 space-y-1 ${compact ? 'text-[10px]' : 'text-xs'}`}>
+    <div className={`mt-1 space-y-1 ${compact ? 'text-[10px] max-h-[70px]' : 'text-xs max-h-[90px]'} overflow-y-auto`}>
       {slots.map((slot) => (
         <Popover key={slot.id}>
           <PopoverTrigger asChild>
