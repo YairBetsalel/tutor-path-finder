@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
-interface AvailabilitySlot {
+export interface AvailabilitySlot {
   id: string;
   tutor_id: string;
   date: string;
@@ -10,6 +10,8 @@ interface AvailabilitySlot {
   end_time: string;
   tutor_name: string;
   tutor_color: string;
+  tutor_bio?: string;
+  tutor_subject?: string;
 }
 
 export function useTutorAvailability(currentMonth: Date) {
@@ -38,21 +40,38 @@ export function useTutorAvailability(currentMonth: Date) {
       // Get unique tutor IDs
       const tutorIds = [...new Set(data.map(d => d.tutor_id))];
 
-      // Fetch tutor profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name, avatar_color')
-        .in('id', tutorIds);
+      // Fetch tutor profiles and tutor_profiles in parallel
+      const [profilesResult, tutorProfilesResult] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, first_name, last_name, avatar_color')
+          .in('id', tutorIds),
+        supabase
+          .from('tutor_profiles')
+          .select('user_id, bio, subject')
+          .in('user_id', tutorIds)
+      ]);
 
-      if (profilesError) throw profilesError;
+      if (profilesResult.error) throw profilesResult.error;
 
-      const profileMap = (profiles || []).reduce((acc, p) => {
+      const profiles = profilesResult.data || [];
+      const tutorProfiles = tutorProfilesResult.data || [];
+
+      const tutorProfileMap = tutorProfiles.reduce((acc, tp) => {
+        acc[tp.user_id] = { bio: tp.bio, subject: tp.subject };
+        return acc;
+      }, {} as Record<string, { bio: string | null; subject: string | null }>);
+
+      const profileMap = profiles.reduce((acc, p) => {
+        const tutorProfile = tutorProfileMap[p.id];
         acc[p.id] = {
           name: `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown',
           color: p.avatar_color || '#0A4D4A',
+          bio: tutorProfile?.bio || undefined,
+          subject: tutorProfile?.subject || undefined,
         };
         return acc;
-      }, {} as Record<string, { name: string; color: string }>);
+      }, {} as Record<string, { name: string; color: string; bio?: string; subject?: string }>);
 
       // Group by date
       const grouped = data.reduce((acc, slot) => {
@@ -69,6 +88,8 @@ export function useTutorAvailability(currentMonth: Date) {
           end_time: slot.end_time,
           tutor_name: profile.name,
           tutor_color: profile.color,
+          tutor_bio: profile.bio,
+          tutor_subject: profile.subject,
         });
         return acc;
       }, {} as Record<string, AvailabilitySlot[]>);
