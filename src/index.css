@@ -2,111 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '@fontsource/libre-baskerville/400.css';
-@import '@fontsource/libre-baskerville/700.css';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/inter/300.css';
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
 
 @layer base {
   :root {
-    /* Sophisticated Educational Palette */
-    --background: 40 33% 98%;
-    --foreground: 180 40% 15%;
+    /* Neo-Minimalist Dark Palette */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 180 40% 15%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 180 40% 15%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Deep Teal - Trust & Intelligence */
-    --primary: 175 75% 17%;
-    --primary-foreground: 40 33% 98%;
+    /* Periwinkle / Purple - Primary */
+    --primary: 250 70% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Warm Coral - Energy & Action */
-    --secondary: 14 65% 63%;
+    /* Gray - Secondary */
+    --secondary: 240 5% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Soft Sage */
-    --muted: 150 20% 90%;
-    --muted-foreground: 180 15% 45%;
+    /* Deep Charcoal - Muted */
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 55%;
 
-    /* Gold Accent */
-    --accent: 43 74% 66%;
-    --accent-foreground: 180 40% 15%;
+    /* Lavender - Accent (Hover States) */
+    --accent: 250 60% 75%;
+    --accent-foreground: 0 0% 4%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 15% 85%;
-    --input: 180 15% 85%;
-    --ring: 175 75% 17%;
+    /* Deep Charcoal Border */
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 250 70% 65%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
+
+    /* Light Slate - Dividers */
+    --divider: 215 15% 40%;
 
     /* Custom Design Tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(175 75% 17%) 0%, hsl(180 50% 25%) 50%, hsl(175 75% 17%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 33% 97%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(14 65% 63%) 0%, hsl(14 70% 55%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43 74% 66%) 0%, hsl(43 80% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 4%) 0%, hsl(250 30% 12%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 8%) 0%, hsl(240 5% 6%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(250 70% 65%) 0%, hsl(250 60% 55%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(250 30% 15%) 0%, hsl(0 0% 8%) 100%);
     
-    --shadow-soft: 0 4px 20px -4px hsl(180 40% 15% / 0.08);
-    --shadow-medium: 0 8px 30px -8px hsl(180 40% 15% / 0.12);
-    --shadow-large: 0 20px 50px -15px hsl(180 40% 15% / 0.15);
-    --shadow-glow: 0 0 30px hsl(175 75% 17% / 0.15);
+    /* Soft Midnight Shadows (purple-tinted) */
+    --shadow-soft: 0 4px 20px -4px hsl(250 50% 5% / 0.4);
+    --shadow-medium: 0 8px 30px -8px hsl(250 50% 5% / 0.5);
+    --shadow-large: 0 20px 50px -15px hsl(250 50% 5% / 0.6);
+    --shadow-glow: 0 0 40px hsl(250 70% 65% / 0.15);
     
-    --font-display: 'Libre Baskerville', Georgia, serif;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 250 70% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 5% 18%;
+    --sidebar-ring: 250 70% 65%;
   }
 
-  .dark {
-    --background: 180 25% 8%;
-    --foreground: 40 33% 95%;
+  /* Dark mode is the default - light mode for accessibility */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 8%;
 
-    --card: 180 20% 12%;
-    --card-foreground: 40 33% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
 
-    --popover: 180 20% 12%;
-    --popover-foreground: 40 33% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
 
-    --primary: 175 60% 45%;
-    --primary-foreground: 180 25% 8%;
+    --primary: 250 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 14 65% 63%;
+    --secondary: 240 5% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 180 15% 20%;
-    --muted-foreground: 180 15% 65%;
+    --muted: 240 5% 92%;
+    --muted-foreground: 240 5% 40%;
 
-    --accent: 43 74% 66%;
-    --accent-foreground: 180 25% 8%;
+    --accent: 250 60% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 15% 25%;
-    --input: 180 15% 25%;
-    --ring: 175 60% 45%;
+    --border: 240 5% 85%;
+    --input: 240 5% 85%;
+    --ring: 250 70% 55%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --divider: 215 15% 70%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 250 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 240 5% 95%;
+    --sidebar-accent-foreground: 0 0% 8%;
+    --sidebar-border: 240 5% 90%;
+    --sidebar-ring: 250 70% 55%;
   }
 }
 
@@ -118,16 +127,26 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.7;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h1 {
+    letter-spacing: -0.03em;
   }
 }
 
 @layer components {
   .text-gradient-primary {
-    background: var(--gradient-hero);
+    background: var(--gradient-accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -145,8 +164,8 @@
     background: var(--gradient-accent);
   }
 
-  .bg-gradient-gold {
-    background: var(--gradient-gold);
+  .bg-gradient-subtle {
+    background: var(--gradient-subtle);
   }
 
   .shadow-soft {
@@ -163,6 +182,19 @@
 
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  /* Neo-minimalist divider */
+  .divider {
+    border-color: hsl(var(--divider));
+  }
+
+  /* Uppercase accent text */
+  .text-caps {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    font-weight: 500;
   }
 }
 

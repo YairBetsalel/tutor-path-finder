@@ -14,8 +14,18 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Libre Baskerville', 'Georgia', 'serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'display-xl': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.03em' }],
+        'display-lg': ['3.5rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
+        'display-md': ['2.5rem', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
+        'display-sm': ['1.75rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
+      },
+      letterSpacing: {
+        'ultra-wide': '0.2em',
+        'extra-wide': '0.15em',
       },
       colors: {
         border: "hsl(var(--border))",
@@ -23,6 +33,7 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        divider: "hsl(var(--divider))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
