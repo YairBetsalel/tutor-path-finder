@@ -35,10 +35,10 @@ export function RadarChart({ metrics }: RadarChartProps) {
         <defs>
           {/* Radial gradient: Neon Coral (center/low) → Vivid Aqua (middle) → Electric Blue (edge/high) */}
           <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-            <stop offset="0%" stopColor="#FF6D6D" stopOpacity={0.9} />
-            <stop offset="40%" stopColor="#FF6D6D" stopOpacity={0.6} />
-            <stop offset="60%" stopColor="#00E5FF" stopOpacity={0.5} />
-            <stop offset="100%" stopColor="#2979FF" stopOpacity={0.7} />
+            <stop offset="0%" stopColor="#FF6D6D" stopOpacity={1} />
+            <stop offset="35%" stopColor="#FF8A8A" stopOpacity={0.95} />
+            <stop offset="55%" stopColor="#00E5FF" stopOpacity={0.9} />
+            <stop offset="100%" stopColor="#2979FF" stopOpacity={0.95} />
           </radialGradient>
           <linearGradient id="radarStroke" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#2979FF" />
@@ -70,8 +70,8 @@ export function RadarChart({ metrics }: RadarChartProps) {
           dataKey="value"
           stroke="url(#radarStroke)"
           fill="url(#radarGradient)"
-          fillOpacity={0.8}
-          strokeWidth={2.5}
+          fillOpacity={0.92}
+          strokeWidth={3}
         />
       </RechartsRadarChart>
     </ResponsiveContainer>
