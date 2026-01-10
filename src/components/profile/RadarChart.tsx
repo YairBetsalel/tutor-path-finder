@@ -26,26 +26,52 @@ export function RadarChart({ metrics }: RadarChartProps) {
     { subject: 'Potential', value: metrics.potential, fullMark: 5 },
   ];
 
+  // Calculate average score to determine gradient position
+  const avgScore = Object.values(metrics).reduce((a, b) => a + b, 0) / 5;
+
   return (
     <ResponsiveContainer width="100%" height={280}>
       <RechartsRadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
-        <PolarGrid stroke="hsl(180, 15%, 85%)" />
+        <defs>
+          {/* Radial gradient: Neon Coral (center/low) → Vivid Aqua (middle) → Electric Blue (edge/high) */}
+          <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" stopColor="#FF6D6D" stopOpacity={0.9} />
+            <stop offset="40%" stopColor="#FF6D6D" stopOpacity={0.6} />
+            <stop offset="60%" stopColor="#00E5FF" stopOpacity={0.5} />
+            <stop offset="100%" stopColor="#2979FF" stopOpacity={0.7} />
+          </radialGradient>
+          <linearGradient id="radarStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#2979FF" />
+            <stop offset="50%" stopColor="#00E5FF" />
+            <stop offset="100%" stopColor="#2979FF" />
+          </linearGradient>
+        </defs>
+        <PolarGrid 
+          stroke="hsl(220, 15%, 75%)" 
+          strokeOpacity={0.6}
+        />
         <PolarAngleAxis
           dataKey="subject"
-          tick={{ fill: 'hsl(180, 40%, 15%)', fontSize: 12, fontFamily: 'Inter' }}
+          tick={{ 
+            fill: 'hsl(220, 20%, 25%)', 
+            fontSize: 12, 
+            fontFamily: 'Space Grotesk',
+            fontWeight: 500
+          }}
         />
         <PolarRadiusAxis
           angle={90}
           domain={[0, 5]}
-          tick={{ fill: 'hsl(180, 15%, 45%)', fontSize: 10 }}
+          tick={{ fill: 'hsl(220, 15%, 50%)', fontSize: 10 }}
+          tickCount={6}
         />
         <Radar
           name="Performance"
           dataKey="value"
-          stroke="hsl(175, 75%, 25%)"
-          fill="hsl(175, 75%, 25%)"
-          fillOpacity={0.3}
-          strokeWidth={2}
+          stroke="url(#radarStroke)"
+          fill="url(#radarGradient)"
+          fillOpacity={0.8}
+          strokeWidth={2.5}
         />
       </RechartsRadarChart>
     </ResponsiveContainer>

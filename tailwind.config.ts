@@ -34,6 +34,11 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         divider: "hsl(var(--divider))",
+        // Brand colors
+        "electric-blue": "hsl(var(--electric-blue))",
+        "vivid-aqua": "hsl(var(--vivid-aqua))",
+        "neon-coral": "hsl(var(--neon-coral))",
+        "dark-charcoal": "hsl(var(--dark-charcoal))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
