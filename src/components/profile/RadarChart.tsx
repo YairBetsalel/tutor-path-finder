@@ -33,17 +33,18 @@ export function RadarChart({ metrics }: RadarChartProps) {
     <ResponsiveContainer width="100%" height={280}>
       <RechartsRadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
         <defs>
-          {/* Radial gradient: Neon Coral (center/low) → Vivid Aqua (middle) → Electric Blue (edge/high) */}
-          <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-            <stop offset="0%" stopColor="#FF6D6D" stopOpacity={1} />
-            <stop offset="35%" stopColor="#FF8A8A" stopOpacity={0.95} />
-            <stop offset="55%" stopColor="#00E5FF" stopOpacity={0.9} />
-            <stop offset="100%" stopColor="#2979FF" stopOpacity={0.95} />
-          </radialGradient>
+          {/* Multi-directional gradient across the shape */}
+          <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#00E5FF" stopOpacity={0.9} />
+            <stop offset="35%" stopColor="#2979FF" stopOpacity={0.85} />
+            <stop offset="65%" stopColor="#FF6D6D" stopOpacity={0.85} />
+            <stop offset="100%" stopColor="#FFB347" stopOpacity={0.9} />
+          </linearGradient>
           <linearGradient id="radarStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#2979FF" />
-            <stop offset="50%" stopColor="#00E5FF" />
-            <stop offset="100%" stopColor="#2979FF" />
+            <stop offset="0%" stopColor="#00E5FF" />
+            <stop offset="35%" stopColor="#2979FF" />
+            <stop offset="65%" stopColor="#FF6D6D" />
+            <stop offset="100%" stopColor="#FFB347" />
           </linearGradient>
         </defs>
         <PolarGrid 
