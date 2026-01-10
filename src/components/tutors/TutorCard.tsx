@@ -32,11 +32,18 @@ export function TutorCard({ tutor }: TutorCardProps) {
           <h3 className="font-display text-lg font-semibold text-foreground">{tutor.name}</h3>
           <div className="mt-2 flex flex-wrap justify-center gap-1.5">
             <Badge
-              variant={tutor.position === 'Management' ? 'default' : 'secondary'}
+              variant={tutor.position === 'Management' ? 'default' : 'outline'}
+              className={tutor.position === 'Management' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'border-vivid-aqua/50 bg-vivid-aqua/10 text-dark-charcoal'
+              }
             >
               {tutor.position}
             </Badge>
-            <Badge variant="outline" className="bg-accent/10 text-accent-foreground">
+            <Badge 
+              variant="outline" 
+              className="border-neon-coral/50 bg-neon-coral/10 text-dark-charcoal"
+            >
               {tutor.subject}
             </Badge>
           </div>
@@ -50,7 +57,7 @@ export function TutorCard({ tutor }: TutorCardProps) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="rounded-full bg-primary/10 px-2 py-1 font-body text-xs text-primary"
+                className="rounded-full border border-electric-blue/30 bg-electric-blue/10 px-2 py-1 font-body text-xs text-electric-blue"
               >
                 {qual}
               </motion.span>
@@ -66,7 +73,7 @@ export function TutorCard({ tutor }: TutorCardProps) {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.15 + index * 0.05 }}
-                  className="rounded-full bg-secondary/20 px-2 py-1 font-body text-xs text-secondary"
+                  className="rounded-full border border-vivid-aqua/30 bg-vivid-aqua/10 px-2 py-1 font-body text-xs text-dark-charcoal"
                 >
                   ✦ {qual}
                 </motion.span>
