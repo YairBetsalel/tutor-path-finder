@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 const testimonials = [
@@ -27,9 +27,27 @@ const testimonials = [
     role: "Medical Student",
     gradient: 'from-electric-blue/20 via-neon-coral/10 to-transparent',
   },
-];
+] as const;
 
-export function TestimonialsCarousel() {
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.9,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.9,
+  }),
+};
+
+export const TestimonialsCarousel = memo(() => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -49,24 +67,6 @@ export function TestimonialsCarousel() {
   const prev = () => {
     setDirection(-1);
     setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.9,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.9,
-    }),
   };
 
   return (
@@ -105,7 +105,7 @@ export function TestimonialsCarousel() {
               <motion.div
                 key={current}
                 custom={direction}
-                variants={variants}
+                variants={slideVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
@@ -178,4 +178,5 @@ export function TestimonialsCarousel() {
       </div>
     </section>
   );
-}
+});
+TestimonialsCarousel.displayName = "TestimonialsCarousel";
