@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 
 const slides = [
   {
@@ -17,9 +17,9 @@ const slides = [
     description: 'Join thousands of students who achieved their goals',
     gradient: 'from-neon-coral/20 to-electric-blue/20',
   },
-];
+] as const;
 
-export function AnimatedSlideshow() {
+export const AnimatedSlideshow = memo(() => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -105,4 +105,5 @@ export function AnimatedSlideshow() {
       </div>
     </div>
   );
-}
+});
+AnimatedSlideshow.displayName = "AnimatedSlideshow";

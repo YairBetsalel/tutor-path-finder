@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 
-export function ParallaxBackground() {
+export const ParallaxBackground = memo(() => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -58,4 +58,5 @@ export function ParallaxBackground() {
       />
     </div>
   );
-}
+});
+ParallaxBackground.displayName = "ParallaxBackground";
