@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { AnimatedToggle } from '@/components/ui/animated-toggle';
 import { StaggeredContainer, StaggeredItem } from '@/components/ui/staggered-container';
 import { EmptyState } from '@/components/ui/empty-state';
+import { ParallaxBackground } from '@/components/team/ParallaxBackground';
+import { AnimatedSlideshow } from '@/components/team/AnimatedSlideshow';
 import { Search, Loader2 } from 'lucide-react';
 import { SUBJECTS, getQualificationsForSubject, Subject } from '@/lib/qualifications';
 import { supabase } from '@/integrations/supabase/client';
@@ -154,7 +156,8 @@ export default function OurTeamPage() {
 
   return (
     <Layout>
-      <section className="py-20 lg:py-28">
+      <ParallaxBackground />
+      <section className="relative py-20 lg:py-28">
         <div className="container mx-auto px-4">
           <motion.div
             className="mx-auto max-w-3xl text-center"
@@ -168,6 +171,9 @@ export default function OurTeamPage() {
             <p className="mt-6 font-body text-lg text-muted-foreground">
               Meet our exceptional team of educators, specialists, and mentors dedicated to helping you succeed.
             </p>
+            
+            {/* Animated Slideshow */}
+            <AnimatedSlideshow />
           </motion.div>
 
           {/* Filters */}

@@ -35,7 +35,7 @@ export function Navbar() {
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
-          <span className="font-display text-xl font-medium tracking-tight text-foreground">Tutorly</span>
+          <span className="font-logo text-xl font-semibold uppercase tracking-extra-wide text-foreground">TUTORLY</span>
         </Link>
 
         {/* Desktop Navigation */}

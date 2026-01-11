@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         display: ['Space Grotesk', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+        logo: ['Barlow', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'display-xl': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.03em' }],
