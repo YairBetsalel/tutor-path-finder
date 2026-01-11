@@ -1,0 +1,123 @@
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { Sparkles, Target, Rocket, Brain } from 'lucide-react';
+
+const showcaseItems = [
+  {
+    icon: Brain,
+    title: 'Adaptive Learning',
+    description: 'AI-powered lesson plans that evolve with your progress',
+    color: 'electric-blue',
+  },
+  {
+    icon: Target,
+    title: 'Goal-Oriented',
+    description: 'Clear milestones and progress tracking for every student',
+    color: 'vivid-aqua',
+  },
+  {
+    icon: Rocket,
+    title: 'Fast Results',
+    description: 'See improvement within weeks, not months',
+    color: 'neon-coral',
+  },
+  {
+    icon: Sparkles,
+    title: 'Premium Quality',
+    description: 'Only the top 5% of tutors make it through our screening',
+    color: 'electric-blue',
+  },
+];
+
+export function ParallaxShowcase() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], ['20%', '-20%']);
+  const y2 = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 10]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
+
+  return (
+    <section ref={containerRef} className="relative overflow-hidden py-20 lg:py-32">
+      {/* Animated background elements */}
+      <motion.div
+        style={{ y: y1, rotate }}
+        className="absolute -right-20 top-20 h-64 w-64 rounded-full border border-electric-blue/20"
+      />
+      <motion.div
+        style={{ y: y2, scale }}
+        className="absolute -left-10 bottom-20 h-48 w-48 rounded-full bg-vivid-aqua/5 blur-2xl"
+      />
+      <motion.div
+        style={{ y: y1 }}
+        className="absolute right-1/4 top-1/3 h-px w-32 rotate-45 bg-gradient-to-r from-transparent via-neon-coral/30 to-transparent"
+      />
+
+      <div className="container relative mx-auto px-4">
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
+            The TUTORLY Difference
+          </h2>
+          <p className="mt-4 font-body text-lg text-muted-foreground">
+            What sets us apart from traditional tutoring
+          </p>
+        </motion.div>
+
+        <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {showcaseItems.map((item, index) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 40, rotateX: -10 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.15 }}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              className="group relative"
+            >
+              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-6 backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:shadow-lg">
+                {/* Hover gradient */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br from-${item.color}/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100`}
+                />
+
+                {/* Floating icon */}
+                <motion.div
+                  className={`relative mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-${item.color}/10`}
+                  animate={{
+                    y: [0, -5, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: index * 0.5,
+                  }}
+                >
+                  <item.icon className={`h-7 w-7 text-${item.color}`} />
+                </motion.div>
+
+                <h3 className="font-display text-lg font-semibold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-2 font-body text-sm text-muted-foreground">
+                  {item.description}
+                </p>
+
+                {/* Decorative corner */}
+                <div className="absolute -bottom-2 -right-2 h-16 w-16 rounded-tl-3xl border-l border-t border-primary/20 opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

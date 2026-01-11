@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
 import { ParallaxHero } from '@/components/hero/ParallaxHero';
+import { FloatingStats } from '@/components/home/FloatingStats';
+import { TestimonialsCarousel } from '@/components/home/TestimonialsCarousel';
+import { ParallaxShowcase } from '@/components/home/ParallaxShowcase';
 import { ArrowRight, BookOpen, Users, Trophy, GraduationCap } from 'lucide-react';
 
 const featureCards = [
@@ -42,6 +45,9 @@ const Index = () => {
     <Layout>
       {/* Parallax Hero Section */}
       <ParallaxHero />
+
+      {/* Floating Stats Ribbon */}
+      <FloatingStats />
 
       {/* Features Section */}
       <section className="py-20 lg:py-28">
@@ -97,6 +103,12 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Parallax Showcase */}
+      <ParallaxShowcase />
+
+      {/* Testimonials Carousel */}
+      <TestimonialsCarousel />
 
       {/* CTA Section */}
       <section className="bg-muted py-20">
