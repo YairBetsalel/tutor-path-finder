@@ -8,7 +8,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-block">
-              <span className="font-display text-xl font-medium tracking-tight text-foreground">Tutorly</span>
+              <span className="font-logo text-xl font-semibold uppercase tracking-extra-wide text-foreground">TUTORLY</span>
             </Link>
             <p className="font-body text-sm font-light leading-relaxed text-muted-foreground">
               Empowering students to achieve academic excellence through personalized tutoring and mentorship.
